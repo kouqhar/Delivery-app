@@ -1,0 +1,48 @@
+.Location_container {
+    height: 100%;
+    width: fit-content;
+    overflow-y: scroll;
+    font-family: 'Courier New', Courier, monospace;
+
+    h1 {
+        text-align: center;
+    }
+
+    &__content {
+        h2 {
+            position: sticky;
+            padding: .5rem;
+            top: 0;
+            background-color: teal;
+            color: rgb(240, 217, 15);
+        }
+
+        ul {
+            padding: 0;
+
+            li {
+                display: block;
+                padding: .35rem .25rem;
+                background-color: teal;
+                color: rgb(240, 217, 15);
+                list-style-type: none;
+                margin: 0;
+
+                span {
+                    font-weight: bolder;
+                    color: #fff;
+                }
+
+                &:nth-child(odd) {
+                    background-color: #000;
+                    color: rgb(240, 217, 15);
+                }
+            }
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        display: none;
+
+    }
+}

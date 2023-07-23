@@ -1,0 +1,37 @@
+.History_container {
+  font-family: "Courier New", Courier, monospace;
+  height: 100%;
+  width: -moz-fit-content;
+  width: fit-content;
+  overflow-y: scroll;
+}
+.History_container h1 {
+  text-align: center;
+  position: sticky;
+  top: 0;
+}
+.History_container__content___details {
+  display: block;
+  padding: 0.5rem;
+  background-color: black;
+  color: rgb(240, 217, 15);
+  list-style-type: none;
+  margin: 0;
+}
+.History_container__content___details span {
+  font-weight: bolder;
+  color: #fff;
+}
+.History_container__content___details p:nth-child(1) {
+  color: rgb(230, 87, 175);
+  font-weight: bolder;
+}
+.History_container__content___details:nth-child(odd) {
+  background-color: teal;
+  color: rgb(240, 217, 15);
+}
+@media screen and (max-width: 768px) {
+  .History_container {
+    display: none;
+  }
+}/*# sourceMappingURL=style.module.css.map */

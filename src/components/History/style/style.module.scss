@@ -1,0 +1,44 @@
+.History_container {
+    font-family: 'Courier New', Courier, monospace;
+    height: 100%;
+    width: fit-content;
+    overflow-y: scroll;
+
+    h1 {
+        text-align: center;
+        position: sticky;
+        top: 0;
+    }
+
+    &__content {
+        &___details {
+            display: block;
+            padding: .5rem;
+            background-color: black;
+            color: rgb(240, 217, 15);
+            list-style-type: none;
+            margin: 0;
+
+            span {
+                font-weight: bolder;
+                color: #fff;
+            }
+
+            p:nth-child(1) {
+                color: rgb(230, 87, 175);
+                font-weight: bolder;
+            }
+
+            &:nth-child(odd) {
+                background-color: teal;
+                color: rgb(240, 217, 15);
+            }
+        }
+    }
+
+
+    @media screen and (max-width: 768px) {
+        display: none;
+
+    }
+}
