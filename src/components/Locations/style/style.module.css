@@ -38,4 +38,7 @@
   .Location_container {
     display: none;
   }
+}
+.Location_container::-webkit-scrollbar {
+  display: none;
 }/*# sourceMappingURL=style.module.css.map */

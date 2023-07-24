@@ -34,4 +34,9 @@
   .History_container {
     display: none;
   }
+}
+.History_container::-webkit-scrollbar {
+  display: none;
+  width: 300px;
+  background-color: red;
 }/*# sourceMappingURL=style.module.css.map */
