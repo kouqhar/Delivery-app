@@ -4,7 +4,6 @@ const InputField = ({
   name,
   onChange,
   placeholder,
-  maxLength,
   required,
 }) => {
   return (
@@ -13,7 +12,7 @@ const InputField = ({
       name={name}
       onChange={onChange}
       placeholder={`Enter ${placeholder} **`}
-      maxLength={`${maxLength}`}
+      maxLength={name === "locationCode" ? 4 : 255}
       required={required ? required : false}
     />
   );

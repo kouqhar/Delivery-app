@@ -130,7 +130,6 @@ const Delivery = () => {
 
   useEffect(() => {
     console.log("Request a Delivery : ", requestDelivery);
-    console.log(JSON.parse(JSON.stringify(requestDelivery)));
   }, [requestDelivery]);
 
   useEffect(() => {
@@ -138,6 +137,18 @@ const Delivery = () => {
       balance >= bookingAmountState.final && dropOff.length > 0 ? false : true
     );
   }, [balance, bookingAmountState.final]);
+
+// Checks do disable adding more drop offs
+ useEffect(() => {
+      
+      if(dropOffHolder?.locationCode === undefined || dropOffHolder?.locationCode.length < 4) {
+      	bookingAmountDispatch({
+      		type: "partial",
+      		partial: 0
+      	})
+      }else setAddDropOffBtn(bookingAmountState?.partial <= 0 ? true : false);
+      if(dropOff.length >= 2) setAddDropOffBtn(true);
+  }, [dropOff, dropOffHolder, bookingAmountState?.partial]);
 
   // Get the wallet Balance
   useEffect(() => {
@@ -155,8 +166,6 @@ const Delivery = () => {
 
   // Get the DropOff amount
   useEffect(() => {
-    const dropOffs = dropOffHolder?.locationCode || "";
-
     const date = new Date(pickupState?.pickupDate);
     const [year, month, day] = [
       date.getFullYear(),
@@ -167,14 +176,14 @@ const Delivery = () => {
       day > 9 ? day : `0${day}`
     }`;
 
-    if (dropOffs && dropOffs.length > 3) {
+    if (dropOffHolder?.locationCode !== undefined && dropOffHolder?.locationCode.length === 4) {
       const reqOptions = {
         method: "POST",
         path: "deliveries/price",
         data: {
           pickupCode: `${pickupState?.locationCode}`,
           pickupDate: `${time}`,
-          dropoffCode: `${dropOffs}`,
+          dropoffCode: `${dropOffHolder?.locationCode}`,
         },
       };
       const fetchDropOffTotal = async () => {
@@ -186,7 +195,6 @@ const Delivery = () => {
       };
 
       fetchDropOffTotal();
-      setAddDropOffBtn(bookingAmountState?.partial <= 0 ? true : false);
       return fetchDropOffTotal;
     }
   }, [dropOffHolder?.locationCode]);
@@ -219,7 +227,6 @@ const Delivery = () => {
         type: "partial",
         partial: 0,
       });
-      setAddDropOffBtn(dropOff.length >= 2 ? true : false);
     } else return `Already added!!!`;
   };
 
@@ -317,7 +324,7 @@ const Delivery = () => {
                 onClick={handleOnAddDropOff}
                 disabled={addDropOffBtn}
               >
-                Add DropOff
+                {dropOff.length >= 2 ? "Max reached" : "Add DropOff"}
               </button>
               <button
                 data-testid="resetBtn"
