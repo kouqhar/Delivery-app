@@ -1,23 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import styles from "./style/style.module.css";
 import httpReq from "../../utils/request/Request";
 
 const Location = () => {
   const [location, setLocation] = useState([]);
+  
+  const memoizedFetchLocations = useMemo(async () => {
+	const reqOptions = {
+	  path: "locations",
+	};
+	const response = await httpReq(reqOptions);
+	return response?.data;
+  }, []);
 
   useEffect(() => {
-    const reqOptions = {
-      path: "locations",
-    };
-    const fetchLocations = async () => {
-      const response = await httpReq(reqOptions);
-      setLocation(response?.data);
-    };
-
-    fetchLocations();
-
-    return fetchLocations;
-  }, []);
+  	memoizedFetchLocations
+  	 .then(res => setLocation(res))
+  	 .catch(err => throwExpressions(err?.message))
+  }, [memoizedFetchLocations]);
+  
   return (
     <div className={styles.Location_container}>
       <h1>Locations</h1>

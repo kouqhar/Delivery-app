@@ -121,18 +121,20 @@ const Delivery = () => {
     initialPickupReducer
   );
 
-  // Adjust the balance background color
-  balance < 100
-    ? (balanceBgColor.current = "rgb(151, 15, 15)")
-    : balance < 1000
-    ? (balanceBgColor.current = "rgb(133, 108, 63)")
-    : (balanceBgColor.current = "rgb(30, 88, 30)");
-
+    // Adjust the balance background color
+    balance < 100
+      ? (balanceBgColor.current = "rgb(151, 15, 15)")
+      : balance < 1000
+      ? (balanceBgColor.current = "rgb(133, 108, 63)")
+      : (balanceBgColor.current = "rgb(30, 88, 30)");
+      
   useEffect(() => {
     console.log("Request a Delivery : ", requestDelivery);
   }, [requestDelivery]);
 
   useEffect(() => {
+      
+    // Disable button on insufficient funds
     setBtnDisabled(
       balance >= bookingAmountState.final && dropOff.length > 0 ? false : true
     );
@@ -146,6 +148,7 @@ const Delivery = () => {
       		type: "partial",
       		partial: 0
       	})
+      	setAddDropOffBtn(true)
       }else setAddDropOffBtn(bookingAmountState?.partial <= 0 ? true : false);
       if(dropOff.length >= 2) setAddDropOffBtn(true);
   }, [dropOff, dropOffHolder, bookingAmountState?.partial]);
@@ -246,7 +249,7 @@ const Delivery = () => {
     const response = await httpReq(reqOptions);
     if (response?.status) setRequestDelivery(response?.data);
     else setRequestDelivery(response);
-
+    
     alert(
       "Hello HR, Can you kindly check your console for the 'Booked Delivery' result!!!"
     );
