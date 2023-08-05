@@ -6,13 +6,17 @@
 
 .Delivery_container {
     text-align: center;
+    width: 100%;
 
     h2 {
         margin: 0;
     }
 
     &__content {
+        width: 100%;
+        margin-inline: auto;
         overflow-y: auto;
+        overflow-x: hidden;
 
         &___balance {
             @extend %flex-space-around;
@@ -20,6 +24,7 @@
             align-items: center;
             position: sticky;
             top: 0;
+            width: 100%;
 
             p {
                 padding: .5rem 2.5rem;
@@ -36,7 +41,6 @@
         }
 
         &___form {
-
             figure {
                 border: 1px #cccccc solid;
                 padding: 4px;

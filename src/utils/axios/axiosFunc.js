@@ -20,6 +20,8 @@ const axiosRequest = async (reqOptions) => {
       defaultOptions["url"] = `${gatewayURI}${reqOptions[key]}`;
     else if (key === "headers")
       defaultOptions["headers"] = { ...reqOptions[key] };
+    else if (key === "cancelToken")
+      defaultOptions.data["cancelToken"] = { ...reqOptions[key] };
     else defaultOptions[key] = reqOptions[key];
   }
   return await axios(defaultOptions)
@@ -33,11 +35,15 @@ const axiosRequest = async (reqOptions) => {
       }
     })
     .catch((error) => {
-      const detailText = {
-        status: error?.response?.status,
-        data: error?.message,
-      };
-      return detailText;
+      if (axios.isCancel(error)) {
+        return "Clean-Up";
+      } else {
+        const detailText = {
+          status: error?.response?.status,
+          data: error?.message,
+        };
+        return detailText;
+      }
     });
 };
 

@@ -4,21 +4,21 @@ import httpReq from "../../utils/request/Request";
 
 const Location = () => {
   const [location, setLocation] = useState([]);
-  
+
   const memoizedFetchLocations = useMemo(async () => {
-	const reqOptions = {
-	  path: "locations",
-	};
-	const response = await httpReq(reqOptions);
-	return response?.data;
+    const reqOptions = {
+      path: "locations",
+    };
+    const response = await httpReq(reqOptions);
+    return response?.data;
   }, []);
 
   useEffect(() => {
-  	memoizedFetchLocations
-  	 .then(res => setLocation(res))
-  	 .catch(err => throwExpressions(err?.message))
+    memoizedFetchLocations
+      .then((res) => setLocation(res))
+      .catch((err) => new Error(err?.message));
   }, [memoizedFetchLocations]);
-  
+
   return (
     <div className={styles.Location_container}>
       <h1>Locations</h1>

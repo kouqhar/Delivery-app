@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import styles from "./style/style.module.css";
 import httpReq from "../../utils/request/Request";
 
+// Dependencies
+import axios from "axios";
+
 const History = () => {
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
+    const cancelToken = axios.CancelToken.source();
     const reqOptions = {
       path: "wallet/transactions",
+      cancelToken: cancelToken.token,
     };
     const fetchTransactions = async () => {
       const response = await httpReq(reqOptions);
@@ -15,8 +20,9 @@ const History = () => {
     };
 
     fetchTransactions();
-
-    return fetchTransactions;
+    return () => {
+      cancelToken.cancel();
+    };
   }, []);
 
   let transactionHistory;

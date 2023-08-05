@@ -6,18 +6,23 @@
 
 .Delivery_container {
   text-align: center;
+  width: 100%;
 }
 .Delivery_container h2 {
   margin: 0;
 }
 .Delivery_container__content {
+  width: 100%;
+  margin-inline: auto;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .Delivery_container__content___balance {
   padding-block: 0.5rem;
   align-items: center;
   position: sticky;
   top: 0;
+  width: 100%;
 }
 .Delivery_container__content___balance p {
   padding: 0.5rem 2.5rem;

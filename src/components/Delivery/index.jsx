@@ -3,6 +3,9 @@ import styles from "./style/style.module.css";
 import httpReq from "../../utils/request/Request";
 import InputField from "../../UI/Common/Fields/InputField";
 
+// dependencies
+import axios from "axios";
+
 // This is for the pickup Reducer
 const pickupReducer = (state, action) => {
   switch (action.type) {
@@ -121,42 +124,38 @@ const Delivery = () => {
     initialPickupReducer
   );
 
-    // Adjust the balance background color
-    balance < 100
-      ? (balanceBgColor.current = "rgb(151, 15, 15)")
-      : balance < 1000
-      ? (balanceBgColor.current = "rgb(133, 108, 63)")
-      : (balanceBgColor.current = "rgb(30, 88, 30)");
-      
   useEffect(() => {
     console.log("Request a Delivery : ", requestDelivery);
   }, [requestDelivery]);
 
   useEffect(() => {
-      
     // Disable button on insufficient funds
     setBtnDisabled(
       balance >= bookingAmountState.final && dropOff.length > 0 ? false : true
     );
   }, [balance, bookingAmountState.final]);
 
-// Checks do disable adding more drop offs
- useEffect(() => {
-      
-      if(dropOffHolder?.locationCode === undefined || dropOffHolder?.locationCode.length < 4) {
-      	bookingAmountDispatch({
-      		type: "partial",
-      		partial: 0
-      	})
-      	setAddDropOffBtn(true)
-      }else setAddDropOffBtn(bookingAmountState?.partial <= 0 ? true : false);
-      if(dropOff.length >= 2) setAddDropOffBtn(true);
+  // Checks do disable adding more drop offs
+  useEffect(() => {
+    if (
+      dropOffHolder?.locationCode === undefined ||
+      dropOffHolder?.locationCode.length < 4
+    ) {
+      bookingAmountDispatch({
+        type: "partial",
+        partial: 0,
+      });
+      setAddDropOffBtn(true);
+    } else setAddDropOffBtn(bookingAmountState?.partial <= 0 ? true : false);
+    if (dropOff.length >= 2) setAddDropOffBtn(true);
   }, [dropOff, dropOffHolder, bookingAmountState?.partial]);
 
   // Get the wallet Balance
   useEffect(() => {
+    const cancelToken = axios.CancelToken.source();
     const reqOptions = {
       path: "wallet/balance",
+      cancelToken: cancelToken.token,
     };
     const fetchBalance = async () => {
       const response = await httpReq(reqOptions);
@@ -164,7 +163,9 @@ const Delivery = () => {
     };
 
     fetchBalance();
-    return fetchBalance;
+    return () => {
+      cancelToken.cancel();
+    };
   }, [balance, requestDelivery]);
 
   // Get the DropOff amount
@@ -179,7 +180,11 @@ const Delivery = () => {
       day > 9 ? day : `0${day}`
     }`;
 
-    if (dropOffHolder?.locationCode !== undefined && dropOffHolder?.locationCode.length === 4) {
+    if (
+      dropOffHolder?.locationCode !== undefined &&
+      dropOffHolder?.locationCode.length === 4
+    ) {
+      let isCancelled = false;
       const reqOptions = {
         method: "POST",
         path: "deliveries/price",
@@ -190,17 +195,28 @@ const Delivery = () => {
         },
       };
       const fetchDropOffTotal = async () => {
-        const response = await httpReq(reqOptions);
-        bookingAmountDispatch({
-          type: "partial",
-          partial: response?.data?.price,
-        });
+        if (!isCancelled) {
+          const response = await httpReq(reqOptions);
+          bookingAmountDispatch({
+            type: "partial",
+            partial: response?.data?.price,
+          });
+        }
       };
 
       fetchDropOffTotal();
-      return fetchDropOffTotal;
+      return () => {
+        isCancelled = true;
+      };
     }
   }, [dropOffHolder?.locationCode]);
+
+  // Adjust the balance background color
+  balance < 100
+    ? (balanceBgColor.current = "rgb(151, 15, 15)")
+    : balance < 1000
+    ? (balanceBgColor.current = "rgb(133, 108, 63)")
+    : (balanceBgColor.current = "rgb(30, 88, 30)");
 
   // Handle pick up reducer change
   const handlePickupInputChange = (e) => {
@@ -247,12 +263,17 @@ const Delivery = () => {
     };
 
     const response = await httpReq(reqOptions);
-    if (response?.status) setRequestDelivery(response?.data);
-    else setRequestDelivery(response);
-    
-    alert(
-      "Hello HR, Can you kindly check your console for the 'Booked Delivery' result!!!"
-    );
+    if (response?.status) {
+      setRequestDelivery(response?.data);
+      alert(
+        "Hello HR, Can you kindly check your console for the 'Booked Delivery' result!!!"
+      );
+    } else {
+      setRequestDelivery(response);
+      alert(
+        "Hello HR, Can you kindly RETRY AGAIN for the 'Booked Delivery' result!!!"
+      );
+    }
   };
 
   return (
