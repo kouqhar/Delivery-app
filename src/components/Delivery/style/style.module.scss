@@ -41,6 +41,7 @@
         }
 
         &___form {
+
             figure {
                 border: 1px #cccccc solid;
                 padding: 4px;
@@ -137,7 +138,7 @@
             }
 
             @media screen and (max-width: 768px) {
-                width: 90% !important;
+                width: 100% !important;
                 margin-inline: auto;
             }
         }

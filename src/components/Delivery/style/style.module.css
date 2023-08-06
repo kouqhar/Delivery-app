@@ -119,7 +119,7 @@
 }
 @media screen and (max-width: 768px) {
   .Delivery_container__content___form {
-    width: 90% !important;
+    width: 100% !important;
     margin-inline: auto;
   }
 }

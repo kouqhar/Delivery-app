@@ -1,92 +1,22 @@
+// dependencies
+import axios from "axios";
 import { useEffect, useRef, useState, useReducer } from "react";
+
+// Imports
 import styles from "./style/style.module.css";
 import httpReq from "../../utils/request/Request";
 import InputField from "../../UI/Common/Fields/InputField";
 
-// dependencies
-import axios from "axios";
-
-// This is for the pickup Reducer
-const pickupReducer = (state, action) => {
-  switch (action.type) {
-    case "address": {
-      return {
-        ...state,
-        address: action.address,
-      };
-    }
-    case "locationCode": {
-      return {
-        ...state,
-        locationCode: action.locationCode,
-      };
-    }
-    case "pickupName": {
-      return {
-        ...state,
-        pickupName: action.pickupName,
-      };
-    }
-    case "pickupNumber": {
-      return {
-        ...state,
-        pickupNumber: action.pickupNumber,
-      };
-    }
-    case "altPickupNumber": {
-      return {
-        ...state,
-        altPickupNumber: action.altPickupNumber,
-      };
-    }
-    case "pickupDate": {
-      return {
-        ...state,
-        pickupDate: new Date(action.pickupDate),
-      };
-    }
-    case "note": {
-      return {
-        ...state,
-        note: action.note,
-      };
-    }
-  }
-};
-const initialPickupReducer = {
-  address: "",
-  locationCode: "",
-  pickupName: "",
-  pickupNumber: "",
-  altPickupNumber: "",
-  pickupDate: "",
-  note: "",
-};
-
-// This is for the price reflection Reducer
-const bookingAmountReducer = (state, action) => {
-  switch (action.type) {
-    case "partial": {
-      return {
-        ...state,
-        partial: action.partial,
-      };
-    }
-    case "final": {
-      return {
-        ...state,
-        final: action.final,
-      };
-    }
-    case "reset": {
-      return {
-        ...state,
-        final: 0,
-        partial: 0,
-      };
-    }
-  }
-};
+// Reducers
+import {
+  pickupReducer,
+  initialPickupReducer,
+} from "../../reducers/pickupReducer";
+import {
+  bookingAmountReducer,
+  initialBookingAmountReducer,
+} from "../../reducers/bookingAmountReducer";
+import { FINAL, PARTIAL, RESET } from "../../actions/types";
 
 // Input fields
 const dropOffFields = [
@@ -117,7 +47,7 @@ const Delivery = () => {
   const [dropOffHolder, setDropOffHolder] = useState({});
   const [bookingAmountState, bookingAmountDispatch] = useReducer(
     bookingAmountReducer,
-    { partial: 0, final: 0 }
+    initialBookingAmountReducer
   );
   const [pickupState, pickupDispatch] = useReducer(
     pickupReducer,
@@ -142,8 +72,8 @@ const Delivery = () => {
       dropOffHolder?.locationCode.length < 4
     ) {
       bookingAmountDispatch({
-        type: "partial",
-        partial: 0,
+        type: PARTIAL,
+        payload: { partial: 0 },
       });
       setAddDropOffBtn(true);
     } else setAddDropOffBtn(bookingAmountState?.partial <= 0 ? true : false);
@@ -198,8 +128,8 @@ const Delivery = () => {
         if (!isCancelled) {
           const response = await httpReq(reqOptions);
           bookingAmountDispatch({
-            type: "partial",
-            partial: response?.data?.price,
+            type: PARTIAL,
+            payload: { partial: response?.data?.price },
           });
         }
       };
@@ -222,7 +152,9 @@ const Delivery = () => {
   const handlePickupInputChange = (e) => {
     pickupDispatch({
       type: e.target.name,
-      [e.target.name]: e.target.value,
+      payload: {
+        [e.target.name]: e.target.value,
+      },
     });
   };
 
@@ -239,12 +171,14 @@ const Delivery = () => {
       setBtnDisabled(balance >= bookingAmountState.final ? false : true);
       setDropOff([...dropOff, dropOffHolder]);
       bookingAmountDispatch({
-        type: "final",
-        final: bookingAmountState.partial + bookingAmountState.final,
+        type: FINAL,
+        payload: {
+          final: bookingAmountState.partial + bookingAmountState.final,
+        },
       });
       bookingAmountDispatch({
-        type: "partial",
-        partial: 0,
+        type: PARTIAL,
+        payload: { partial: 0 },
       });
     } else return `Already added!!!`;
   };
@@ -356,7 +290,7 @@ const Delivery = () => {
                 onClick={() => {
                   setDropOff([]);
                   bookingAmountDispatch({
-                    type: "reset",
+                    type: RESET,
                   });
                 }}
               >
